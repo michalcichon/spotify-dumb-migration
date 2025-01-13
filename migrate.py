@@ -33,16 +33,30 @@ def fetch_title(url):
         title = soup.title.string if soup.title else "(no title)"
         return clean_title(title)
     except requests.RequestException as e:
-        return "Error: Unable to fetch title"
+        return f"Error: {e}"
 
 def main():
     """Main function of the script."""
-    urls = get_file_content()
-    for url in urls:
-        if not url.strip():
-            continue
-        title = fetch_title(url)
-        print(title)
+    if not sys.stdin.isatty():
+        input_file = "stdin"
+        urls = sys.stdin.read().strip().splitlines()
+    else:
+        input_file = input("Enter the path to the file containing URLs: ").strip()
+        if not os.path.exists(input_file):
+            print(f"File {input_file} does not exist.")
+            sys.exit(1)
+        with open(input_file, 'r') as file:
+            urls = file.read().strip().splitlines()
+
+    output_file = f"{input_file}_titles" if input_file != "stdin" else "output_titles.txt"
+
+    with open(output_file, 'w') as out_file:
+        for url in urls:
+            if not url.strip():
+                continue
+            title = fetch_title(url)
+            print(title)
+            out_file.write(title + "\n")
 
 if __name__ == "__main__":
     main()
