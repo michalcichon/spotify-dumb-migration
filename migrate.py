@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 
 # Define a blacklist of strings to remove from titles
-blacklist = ["| Spotify", "abc"]
+blacklist = ["| Spotify", "song by "]
 
 def get_file_content():
     """Fetches the content of the file containing a list of URLs."""
